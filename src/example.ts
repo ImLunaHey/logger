@@ -5,10 +5,11 @@ const schema = {
     debug: {
         'stats': z.object({
             a: z.number(),
-            b: z.number().optional(),
         }),
     },
-    error: {},
+    error: {
+        'error': z.object({}),
+    },
     info: {},
     warn: {},
 } satisfies BaseSchema;
@@ -39,4 +40,11 @@ logger.debug('stats', {
 
 logger.debug('stats', {
     a: 1
+});
+
+// `error` is required when using `.error` method
+// `cause` is optional
+logger.error('error', {
+    error: new Error('A thing happened'),
+    cause: new Error('This thing caused it'),
 });

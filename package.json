@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "npm run build",
-    "build": "npx tsup --config ./tsup.config.ts",
+    "build": "npx tsup ./src/logger.ts",
     "test": "dotenv -e .env.test -- npx jest --detectOpenHandles",
     "coverage": "npm run test -- --coverage",
     "lint": "eslint src",

@@ -19,9 +19,6 @@ const logger = new Logger({
     schema,
 });
 
-// This should work but throws since it says the first is a string when it should be "never"
-// I want the first arg to be the key of the schema above
-// Then the second arg to be the field in the schema that matches
 logger.debug('stats', {
     a: 123,
 });

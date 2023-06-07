@@ -19,9 +19,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "paths": {
-      "@lib/*": ["src/*"]
-    },
     "lib": [
       "es2021"
     ],

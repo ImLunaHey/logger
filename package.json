@@ -1,9 +1,10 @@
 {
-  "name": "logger",
+  "name": "@imlunahey/logger",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/logger.js",
-  "module": "dist/logger.mjs",
+  "main": "dist/logger.cjs",
+  "module": "dist/logger.js",
+  "types": "dist/logger.d.ts",
   "type": "module",
   "scripts": {
     "build": "npx tsup",

@@ -9,5 +9,5 @@ export default defineConfig({
     clean: true,
     minify: true,
     treeshake: true,
-    entry: ['src/logger.ts'],
+    entry: ['./src/logger.ts'],
 });

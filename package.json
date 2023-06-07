@@ -15,7 +15,8 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "files": [
-    "src/logger.ts"
+    "src/logger.ts",
+    "src/get-commit-hash.ts"
   ],
   "keywords": [
     "logging",

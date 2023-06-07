@@ -1,5 +1,5 @@
 import z from 'zod';
-import { BaseSchema, Logger } from '@lib/logger';
+import { BaseSchema, Logger } from './logger';
 
 const schema = {
     debug: {

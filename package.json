@@ -15,7 +15,7 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "files": [
-    "dist"
+    "src/logger.ts"
   ],
   "keywords": [
     "logging",

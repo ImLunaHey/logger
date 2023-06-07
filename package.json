@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "npm run build",
-    "build": "npx tsup ./src/logger.ts",
+    "build": "npx tsup",
     "test": "dotenv -e .env.test -- npx jest --detectOpenHandles",
     "coverage": "npm run test -- --coverage",
     "lint": "eslint src",
@@ -16,7 +16,9 @@
   },
   "files": [
     "src/logger.ts",
-    "src/get-commit-hash.ts"
+    "src/get-commit-hash.ts",
+    "tsup.config.ts",
+    "tsconfig.json"
   ],
   "keywords": [
     "logging",

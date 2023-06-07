@@ -27,6 +27,6 @@
     ],
     "moduleSuffixes": [""]
   },
-  "exclude": ["node_modules"],
+  "exclude": ["./src/example.ts"],
   "include": ["./src/**/*.ts"]
 }

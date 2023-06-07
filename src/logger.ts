@@ -30,13 +30,9 @@ const formatMeta = (meta: Meta) => {
     return '';
 };
 
-const BaseSchema = z.object({
-    name: z.string(),
-    pid: z.number(),
-    commitHash: z.string(),
-    service: z.string(),
-}).partial();
-type BaseSchema = typeof BaseSchema;
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+export type BaseSchema = Record<LogLevel, Record<string, z.AnyZodObject>>;
 
 type Options<Schema extends BaseSchema> = {
     service: string;
@@ -102,27 +98,28 @@ export class Logger<Schema extends BaseSchema> {
         this.schema = options.schema;
     }
 
-    private log(level: 'debug' | 'info' | 'warn' | 'error', message: string, meta?: Schema) {
-        // Ensure data has no extra keys
-        this.schema?.parse(meta);
+    private log<Message extends keyof Schema[LogLevel]>(level: LogLevel, message: Message, data?: z.infer<Schema[LogLevel][Message]>) {
+        // Ensure meta is valid before logging
+        const parser = this.schema?.[level]?.[message as string];
+        const meta = parser?.parse(data);
 
         // Call the actual logger
-        this.logger[level](message, meta);
+        this.logger[level](message as string, meta);
     }
 
-    debug(message: string, meta?: Schema) {
+    debug<Message extends keyof Schema['debug']>(message: Message, meta?: z.infer<Schema['debug'][Message]>) {
         this.log('debug', message, meta);
     }
 
-    info(message: string, meta?: Schema) {
+    info<Message extends keyof Schema['info']>(message: Message, meta?: z.infer<Schema['info'][Message]>) {
         this.log('info', message, meta);
     }
 
-    warn(message: string, meta?: Schema) {
+    warn<Message extends keyof Schema['warn']>(message: Message, meta?: z.infer<Schema['warn'][Message]>) {
         this.log('warn', message, meta);
     }
 
-    error(message: string, meta?: { error: unknown, cause?: unknown } & Schema) {
+    error<Message extends keyof Schema['error']>(message: Message, meta?: { error: unknown, cause?: unknown } & z.infer<Schema['error'][Message]>) {
         // If the error isn't an error object make it so
         // This is to prevent issues where something other than an Error is thrown
         // When passing this to transports like Axiom it really needs to be a real Error class

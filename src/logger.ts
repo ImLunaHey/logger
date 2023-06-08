@@ -33,7 +33,7 @@ const formatMeta = (meta: Meta) => {
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-export type BaseSchema = Record<LogLevel, Record<string, z.ZodSchema>>;
+export type BaseSchema = Record<LogLevel, Record<string, z.input<z.ZodSchema>>>;
 
 type Options<Schema extends BaseSchema> = {
     service: string;

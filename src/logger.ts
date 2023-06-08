@@ -25,9 +25,9 @@ type Meta = {
 };
 
 const formatMeta = (meta: Meta) => {
-    const splat = meta[Symbol.for('splat') as typeof splatSymbol];
-    if (splat && splat.length > 0) return splat.length === 1 ? JSON.stringify(splat[0]) : JSON.stringify(splat);
-    return '';
+    const splats = meta[Symbol.for('splat') as typeof splatSymbol];
+    const splat = (splats && splats.length > 0) ? splats.length === 1 ? JSON.stringify(splats[0]) : JSON.stringify(splats) : undefined;
+    return splat ?? '';
 };
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';

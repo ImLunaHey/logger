@@ -91,6 +91,10 @@ export class Logger<Schema extends BaseSchema> {
                             return `${formattedDate} [${serviceName}] [${formattedLevel}]: ${message as string} ${formattedMeta}`;
                         }),
                     ),
+                    // Exception and rejection handling is not optional
+                    // Allowing this to be optional is a mistake waiting to happen
+                    handleExceptions: true,
+                    handleRejections: true,
                 }),
             );
         }

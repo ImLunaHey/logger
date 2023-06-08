@@ -101,7 +101,13 @@ export class Logger<Schema extends BaseSchema> {
     private log<Message extends keyof Schema[LogLevel]>(level: LogLevel, message: Message, data?: z.infer<Schema[LogLevel][Message]>) {
         // Ensure meta is valid before logging
         const parser = this.schema?.[level]?.[message as string];
-        const meta = parser?.parse(data);
+        const parsedData = parser?.safeParse(data);
+        // This ensures that we never go over the limit of keys in axiom
+        // NOTE: We can always use `json_parse` in axiom to manage the data later.
+        const meta = parsedData?.success ? parsedData.data : {
+            data: JSON.stringify(data),
+            error: parsedData?.error
+        };
 
         // Call the actual logger
         this.logger[level](message as string, meta);

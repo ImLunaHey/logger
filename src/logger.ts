@@ -103,7 +103,7 @@ export class Logger<Schema extends BaseSchema> {
         this.schema = options.schema;
     }
 
-    private log<Message extends keyof Schema[LogLevel]>(level: LogLevel, message: Message, data?: z.infer<Schema[LogLevel][Message]>) {
+    private log<Message extends keyof Schema[LogLevel]>(level: LogLevel, message: Message, data?: z.input<Schema[LogLevel][Message]>) {
         // Ensure meta is valid before logging
         const parser = this.schema?.[level]?.[message as string];
         const parsedData = parser?.safeParse(data);
@@ -118,19 +118,19 @@ export class Logger<Schema extends BaseSchema> {
         this.logger[level](message as string, meta);
     }
 
-    debug<Message extends keyof Schema['debug']>(message: Message, meta?: z.infer<Schema['debug'][Message]>) {
+    debug<Message extends keyof Schema['debug']>(message: Message, meta?: z.input<Schema['debug'][Message]>) {
         this.log('debug', message, meta);
     }
 
-    info<Message extends keyof Schema['info']>(message: Message, meta?: z.infer<Schema['info'][Message]>) {
+    info<Message extends keyof Schema['info']>(message: Message, meta?: z.input<Schema['info'][Message]>) {
         this.log('info', message, meta);
     }
 
-    warn<Message extends keyof Schema['warn']>(message: Message, meta?: z.infer<Schema['warn'][Message]>) {
+    warn<Message extends keyof Schema['warn']>(message: Message, meta?: z.input<Schema['warn'][Message]>) {
         this.log('warn', message, meta);
     }
 
-    error<Message extends keyof Schema['error']>(message: Message, meta?: { error: unknown, cause?: unknown } & z.infer<Schema['error'][Message]>) {
+    error<Message extends keyof Schema['error']>(message: Message, meta?: { error: unknown, cause?: unknown } & z.input<Schema['error'][Message]>) {
         // If the error isn't an error object make it so
         // This is to prevent issues where something other than an Error is thrown
         // When passing this to transports like Axiom it really needs to be a real Error class

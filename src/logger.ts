@@ -4,7 +4,7 @@ import { WinstonTransport as AxiomTransport } from '@axiomhq/axiom-node';
 import chalk from 'chalk';
 import { name } from '@lib/../package.json';
 import { getCommitHash } from './get-commit-hash';
-import jsonStringify from 'color-json';
+import cj from 'color-json';
 
 const logLevelColours = {
     error: 'red',
@@ -27,8 +27,8 @@ type Meta = {
 
 const formatMeta = (meta: Meta) => {
     const splats = meta[Symbol.for('splat') as typeof splatSymbol];
-    const splat = (splats && splats.length > 0) ? splats.length === 1 ? jsonStringify(splats[0] as any) : jsonStringify(splats) : undefined;
-    return splat ?? '';
+    const splat = (splats && splats.length > 0) ? splats.length === 1 ? JSON.stringify(splats[0]) : JSON.stringify(splats) : undefined;
+    return cj(splat ?? '');
 };
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';

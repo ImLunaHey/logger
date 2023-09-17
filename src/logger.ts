@@ -6,6 +6,8 @@ import pkg from '../package.json';
 import { getCommitHash } from './get-commit-hash';
 import cj from 'color-json';
 
+export { z } from 'zod';
+
 const logLevelColours = {
     error: 'red',
     warn: 'yellow',
@@ -48,7 +50,7 @@ const serialiseError = (error: Error): SerialisedError => ({
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-export type BaseSchema = {
+type BaseSchema = {
     [level in LogLevel]?: Record<string, z.ZodObject<any, any, any>>;
 };
 
@@ -56,6 +58,20 @@ type Options<Schema extends BaseSchema> = {
     service: string;
     schema?: Schema;
 }
+
+type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Message> =
+    Message extends keyof Schema[Level]
+    ? Schema[Level][Message] extends z.ZodType<any, any, any>
+    ? z.input<Schema[Level][Message]>
+    : undefined
+    : never;
+
+type DebugMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'debug', keyof Schema['debug']>;
+type InfoMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'info', keyof Schema['info']>;
+type WarnMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'warn', keyof Schema['warn']>;
+type ErrorMeta<Schema extends BaseSchema> = {
+    error: Error;
+} & MetaForSchema<Schema, 'error', keyof Schema['error']>;
 
 export class Logger<Schema extends BaseSchema> {
     private logger: WinstonLogger;
@@ -120,7 +136,7 @@ export class Logger<Schema extends BaseSchema> {
         this.schema = options.schema;
     }
 
-    private log<Message extends keyof Schema[LogLevel], Meta extends (Schema[LogLevel][Message] extends z.ZodType ? z.input<Schema[LogLevel][Message]> : undefined)>(level: LogLevel, message: Message, data: Meta) {
+    private log<Message extends keyof Schema[LogLevel]>(level: LogLevel, message: Message, data: (Schema[LogLevel][Message] extends z.ZodType ? z.input<Schema[LogLevel][Message]> : undefined)) {
         // Ensure meta is valid before logging
         const parser = this.schema?.[level]?.[message as string];
         const parsedData = parser?.safeParse(data);
@@ -135,19 +151,19 @@ export class Logger<Schema extends BaseSchema> {
         this.logger[level](message as string, meta);
     }
 
-    debug<Message extends keyof Schema['debug'], Meta extends (Schema['debug'][Message] extends z.ZodType ? z.input<Schema['debug'][Message]> : undefined)>(message: Message, meta: Meta) {
+    debug<Message extends keyof Schema['debug']>(message: Message, meta: DebugMeta<Schema>) {
         this.log('debug', message, meta);
     }
 
-    info<Message extends keyof Schema['info'], Meta extends (Schema['info'][Message] extends z.ZodType ? z.input<Schema['info'][Message]> : undefined)>(message: Message, meta: Meta) {
+    info<Message extends keyof Schema['info']>(message: Message, meta: InfoMeta<Schema>) {
         this.log('info', message, meta);
     }
 
-    warn<Message extends keyof Schema['warn'], Meta extends (Schema['warn'][Message] extends z.ZodType ? z.input<Schema['warn'][Message]> : undefined)>(message: Message, meta: Meta) {
+    warn<Message extends keyof Schema['warn']>(message: Message, meta: WarnMeta<Schema>) {
         this.log('warn', message, meta);
     }
 
-    error<Message extends keyof Schema['error'], Meta extends { error: Error } & (Schema['error'][Message] extends z.ZodType ? z.input<Schema['error'][Message]> : undefined)>(message: Message, meta: Meta) {
+    error<Message extends keyof Schema['error']>(message: Message, meta: ErrorMeta<Schema>) {
         // If the error isn't an error object make it so
         // This is to prevent issues where something other than an Error is thrown
         // When passing this to transports like Axiom it really needs to be a real Error class

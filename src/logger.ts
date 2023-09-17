@@ -111,7 +111,7 @@ export class Logger<Schema extends BaseSchema> {
         }
 
         // Add the console logger if we're not running tests, there are no transports or the user has added it to the `TRANSPORTS` env
-        if (process.env.NODE_ENV !== 'test' || this.logger.transports.length === 0 || process.env.TRANSPORTS?.split(',').map(_ => _.toLowerCase()).includes('console')) {
+        if (process.env.NODE_ENV !== 'test' && (this.logger.transports.length === 0 || process.env.TRANSPORTS?.split(',').map(_ => _.toLowerCase()).includes('console'))) {
             this.logger.add(
                 new transports.Console({
                     format: format.combine(

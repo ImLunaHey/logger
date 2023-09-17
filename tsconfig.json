@@ -20,9 +20,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "lib": [
-      "es2021"
-    ],
-    "moduleSuffixes": [""]
+      "es2022"
+    ]
   },
   "exclude": ["./src/example.ts"],
   "include": ["./src/**/*.ts"]

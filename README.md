@@ -7,7 +7,7 @@
 You can install `@ImLunaHey/logger` using npm:
 
 ```shell
-npm install github:@ImLunaHey/logger
+npm i @ImLunaHey/logger
 ```
 
 ## Usage
@@ -43,6 +43,7 @@ logger.debug('This is a debug message');
 logger.info('This is an info message');
 logger.warn('This is a warning message');
 logger.error('This is an error message', { error: new Error('Something went wrong') });
+logger.error('This is an error message', { error: new Error('Something went wrong', { cause: new Error('This actually caused the error') }) });
 ```
 
 ### Log Data Schema
@@ -70,7 +71,6 @@ const logger = new Logger({
 logger.info('User logged in', { userId: '123', action: 'login' });
 ```
 
-If the `meta` object does not match the `schema`, an error will be thrown.
 If extra keys are included in the `meta` object they will be stripped.
 
 ### Test Environment

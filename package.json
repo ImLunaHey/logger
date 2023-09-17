@@ -2,23 +2,19 @@
   "name": "@imlunahey/logger",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/logger.cjs",
   "module": "dist/logger.js",
   "types": "dist/logger.d.ts",
   "type": "module",
   "scripts": {
     "postinstall": "npm run build",
-    "build": "npx tsup",
-    "test": "dotenv -e .env.test -- npx jest --detectOpenHandles",
+    "build": "tsup",
+    "test": "dotenv -e .env.test -- jest --detectOpenHandles",
     "coverage": "npm run test -- --coverage",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix"
   },
   "files": [
-    "src/logger.ts",
-    "src/get-commit-hash.ts",
-    "tsup.config.ts",
-    "tsconfig.json"
+    "dist"
   ],
   "keywords": [
     "logging",

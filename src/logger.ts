@@ -100,8 +100,8 @@ export class Logger<Schema extends BaseSchema> {
             this.logger.silent = true;
         }
 
-        // Use Axiom for logging if a token is provided
-        if (process.env.AXIOM_TOKEN) {
+        // Use Axiom for logging if all the needed envs are provided
+        if (process.env.AXIOM_ORG_ID && process.env.AXIOM_DATASET && process.env.AXIOM_TOKEN) {
             this.logger.add(new AxiomTransport({
                 // Exception and rejection handling is not optional
                 // Allowing this to be optional is a mistake waiting to happen

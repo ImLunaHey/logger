@@ -66,12 +66,12 @@ type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Messag
     : undefined
     : never;
 
-type DebugMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'debug', keyof Schema['debug']>;
-type InfoMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'info', keyof Schema['info']>;
-type WarnMeta<Schema extends BaseSchema> = MetaForSchema<Schema, 'warn', keyof Schema['warn']>;
-type ErrorMeta<Schema extends BaseSchema> = {
+type DebugMeta<Schema extends BaseSchema, Message extends keyof Schema['debug']> = MetaForSchema<Schema, 'debug', Message>;
+type InfoMeta<Schema extends BaseSchema, Message extends keyof Schema['info']> = MetaForSchema<Schema, 'info', Message>;
+type WarnMeta<Schema extends BaseSchema, Message extends keyof Schema['warn']> = MetaForSchema<Schema, 'warn', Message>;
+type ErrorMeta<Schema extends BaseSchema, Message extends keyof Schema['error']> = {
     error: Error;
-} & MetaForSchema<Schema, 'error', keyof Schema['error']>;
+} & MetaForSchema<Schema, 'error', Message>;
 
 export class Logger<Schema extends BaseSchema> {
     private logger: WinstonLogger;
@@ -151,19 +151,19 @@ export class Logger<Schema extends BaseSchema> {
         this.logger[level](message as string, meta);
     }
 
-    debug<Message extends keyof Schema['debug']>(message: Message, meta: DebugMeta<Schema>) {
+    debug<Message extends keyof Schema['debug']>(message: Message, meta: DebugMeta<Schema, Message>) {
         this.log('debug', message, meta);
     }
 
-    info<Message extends keyof Schema['info']>(message: Message, meta: InfoMeta<Schema>) {
+    info<Message extends keyof Schema['info']>(message: Message, meta: InfoMeta<Schema, Message>) {
         this.log('info', message, meta);
     }
 
-    warn<Message extends keyof Schema['warn']>(message: Message, meta: WarnMeta<Schema>) {
+    warn<Message extends keyof Schema['warn']>(message: Message, meta: WarnMeta<Schema, Message>) {
         this.log('warn', message, meta);
     }
 
-    error<Message extends keyof Schema['error']>(message: Message, meta: ErrorMeta<Schema>) {
+    error<Message extends keyof Schema['error']>(message: Message, meta: ErrorMeta<Schema, Message>) {
         // If the error isn't an error object make it so
         // This is to prevent issues where something other than an Error is thrown
         // When passing this to transports like Axiom it really needs to be a real Error class

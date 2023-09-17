@@ -93,6 +93,8 @@ export class Logger<Schema extends BaseSchema> {
             transports: [],
         });
 
+        console.debug('Creating logger', process.env);
+
         // Don't log while running tests
         // This allows the methods to still be hooked
         // while not messing up the test output
@@ -102,6 +104,7 @@ export class Logger<Schema extends BaseSchema> {
 
         // Use Axiom for logging if a token is provided
         if (process.env.AXIOM_TOKEN) {
+            console.debug('Using Axiom transport');
             this.logger.add(new AxiomTransport({
                 // Exception and rejection handling is not optional
                 // Allowing this to be optional is a mistake waiting to happen
@@ -112,6 +115,7 @@ export class Logger<Schema extends BaseSchema> {
 
         // Add the console logger if we're not running tests, there are no transports or the user has added it to the `TRANSPORTS` env
         if (process.env.NODE_ENV !== 'test' && (this.logger.transports.length === 0 || process.env.TRANSPORTS?.split(',').map(_ => _.toLowerCase()).includes('console'))) {
+            console.debug('Using console transport');
             this.logger.add(
                 new transports.Console({
                     format: format.combine(

@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2022",
+    "module": "ES2022",
     "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "removeComments": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -23,6 +23,8 @@
       "es2022"
     ]
   },
-  "exclude": ["./src/example.ts"],
-  "include": ["./src/**/*.ts"]
+  "include": [
+    "./src/**/*.ts",
+    "./examples/**/*.ts"
+  ]
 }

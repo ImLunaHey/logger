@@ -50,7 +50,7 @@ const serialiseError = (error: Error): SerialisedError => ({
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-type BaseSchema = {
+export type BaseSchema = {
     [level in LogLevel]?: Record<string, z.ZodObject<any, any, any>>;
 };
 

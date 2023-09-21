@@ -82,6 +82,9 @@ jobs:
     needs: bump_version
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Generate CHANGELOG for Github release
         id: changelog

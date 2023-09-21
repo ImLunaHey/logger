@@ -1,5 +1,5 @@
 import z from 'zod';
-import { BaseSchema, Logger } from './logger';
+import { BaseSchema, Logger } from '../logger';
 
 const schema = {
     debug: {
@@ -42,6 +42,7 @@ logger.debug('stats', {
 // `error` is required when using `.error` method
 // `cause` is optional
 logger.error('error', {
-    error: new Error('A thing happened'),
-    cause: new Error('This thing caused it'),
+    error: new Error('A thing happened', {
+        cause: new Error('This thing caused it'),
+    })
 });

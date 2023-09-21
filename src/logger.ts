@@ -78,8 +78,9 @@ export class Logger<Schema extends BaseSchema> {
     private schema?: Schema;
 
     constructor(options: Options<Schema>) {
+        const logLevel = process.env.LOG_LEVEL ? (['silly', 'info', 'debug', 'warn', 'error'].includes(process.env.LOG_LEVEL) ? process.env.LOG_LEVEL : 'silly') : 'silly';
         this.logger = createLogger({
-            level: 'silly',
+            level: logLevel,
             format: format.combine(
                 format.errors({ stack: true }),
                 format.json()

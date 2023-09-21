@@ -78,7 +78,7 @@ jobs:
       - name: Get current tag
         id: current_tag
         run: |
-          echo "current_tag=$(git describe --tags --abbrev=0)"
+          echo "current_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
       - name: Push changes
         run: git push --follow-tags origin main

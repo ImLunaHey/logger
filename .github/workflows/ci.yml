@@ -38,6 +38,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set git email
         run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"

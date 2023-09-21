@@ -33,15 +33,22 @@ jobs:
     permissions:
       contents: write
 
-    outputs:
-      current_tag: ${{ steps.current_tag.outputs.current_tag }}
-      previous_tag: ${{ steps.previous_tag.outputs.previous_tag }}
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Set git email
         run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -65,45 +72,13 @@ jobs:
       - name: Push changes
         run: git push --follow-tags origin main
 
-  release:
-    # DO NOT RUN ON PR
-    if: github.event_name != 'pull_request'
-    needs: bump_version
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install packages
-        run: bun i
-
-      - name: Build library and CLI
-        run: bun run build
-
       - name: Generate CHANGELOG for Github release
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          fromTag: ${{ needs.bump_version.outputs.current_tag }}
-          toTag: ${{ needs.bump_version.outputs.previous_tag }}
+          fromTag: ${{ steps.current_tag.outputs.current_tag }}
+          toTag: ${{ steps.previous_tag.outputs.previous_tag }}
           writeToFile: false
 
       - name: Publish to NPM
@@ -117,8 +92,8 @@ jobs:
           allowUpdates: true
           draft: false
           makeLatest: true
-          tag: ${{ needs.bump_version.outputs.current_tag }}
-          name: ${{ needs.bump_version.outputs.current_tag }}
+          tag: ${{ steps.current_tag.outputs.current_tag }}
+          name: ${{ steps.current_tag.outputs.current_tag }}
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ github.token }}
           artifacts: '*.tgz'

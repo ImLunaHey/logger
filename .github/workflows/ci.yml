@@ -79,8 +79,8 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          fromTag: ${{ steps.previous_tag.outputs.previous_tag }}
-          toTag: ${{ steps.current_tag.outputs.current_tag }}
+          fromTag: ${{ steps.current_tag.outputs.current_tag }}
+          toTag: ${{ steps.previous_tag.outputs.previous_tag }}
           writeToFile: false
 
       - name: Create package for Github release

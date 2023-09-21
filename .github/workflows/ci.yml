@@ -59,8 +59,10 @@ jobs:
         run: bun run build
 
       - name: Get previous tag
-        id: previousTag
-        run: git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | tail -2 | head -1
+        id: previous_tag
+        run: |
+          previous_tag=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | tail -2 | head -1)
+          echo "{previous_tag}={previous_tag}" >> $GITHUB_OUTPUT
 
       - name: Generate CHANGELOG for Github release
         id: changelog
@@ -68,7 +70,7 @@ jobs:
         with:
           token: ${{ github.token }}
           fromTag: ${{ github.ref_name }}
-          toTag: ${{ steps.previousTag.outputs.stdout }}
+          toTag: ${{ steps.previous_tag.outputs.previous_tag }}
           writeToFile: false
 
       - name: Bump package version

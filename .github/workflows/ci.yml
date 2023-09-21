@@ -43,23 +43,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set git email
-        run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Set git name
-        run: git config --global user.name "github-actions[bot]"
-
-      - name: Install bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - name: Install packages
-        run: bun i
-
-      - name: Build library and CLI
-        run: bun run build
-
       - name: Get previous tag
         id: previous_tag
         run: |
@@ -86,6 +69,22 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install packages
+        run: bun i
+
+      - name: Build library and CLI
+        run: bun run build
+
       - name: Generate CHANGELOG for Github release
         id: changelog
         uses: requarks/changelog-action@v1

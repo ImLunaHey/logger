@@ -68,12 +68,12 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          fromTag: ${{ github.ref_name }}
-          toTag: ${{ steps.previous_tag.outputs.previous_tag }}
+          fromTag: ${{ steps.previous_tag.outputs.previous_tag }}
+          toTag: ${{ github.ref_name }}
           writeToFile: false
 
       - name: Bump package version
-        run: npx standard-version --prerelease nightly
+        run: npx standard-version
 
       - name: Get current tag
         id: current_tag

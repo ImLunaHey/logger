@@ -44,11 +44,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
+      - name: Install packages
+        run: bun i
 
       - name: Set git email
         run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -80,6 +77,12 @@ jobs:
           fromTag: ${{ steps.current_tag.outputs.current_tag }}
           toTag: ${{ steps.previous_tag.outputs.previous_tag }}
           writeToFile: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Publish to NPM
         run: npm publish --access public

@@ -75,8 +75,16 @@ jobs:
       - name: Bump package version
         run: npx standard-version --prerelease nightly
 
+      - name: Get current tag
+        id: current_tag
+        run: |
+          echo "current_tag=$(git describe --tags --abbrev=0)"
+
       - name: Push changes
         run: git push --follow-tags origin main
+
+      - name: Create package for Github release
+        run: npm pack
 
       - name: Create Github release
         uses: ncipollo/release-action@v1.13.0
@@ -85,9 +93,10 @@ jobs:
           allowUpdates: true
           draft: false
           makeLatest: true
-          name: ${{ github.ref_name }}
+          name: ${{ steps.current_tag.outputs.current_tag }}
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ github.token }}
+          artifacts: '*.tgz'
 
       - name: Publish to NPM
         run: npm run publish

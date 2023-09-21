@@ -54,22 +54,24 @@ jobs:
       - name: Build library and CLI
         run: bun run build
 
-      - name: Bump package version
-        run: npx standard-version
-
-      - name: Push changes
-        run: git push --follow-tags origin main
-
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
           tag: ${{ github.ref_name }}
+          writeToFile: false
+
+      - name: Bump package version
+        run: npx standard-version --prerelease nightly
+
+      - name: Push changes
+        run: git push --follow-tags origin main
 
       - name: Create Release
         uses: ncipollo/release-action@v1.13.0
         with:
+          prerelease: true
           allowUpdates: true
           draft: false
           makeLatest: true

@@ -83,9 +83,6 @@ jobs:
           toTag: ${{ steps.previous_tag.outputs.previous_tag }}
           writeToFile: false
 
-      - name: Create package for Github release
-        run: npm pack
-
       - name: Create Github release
         uses: ncipollo/release-action@v1.13.0
         with:
@@ -99,6 +96,6 @@ jobs:
           artifacts: '*.tgz'
 
       - name: Publish to NPM
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

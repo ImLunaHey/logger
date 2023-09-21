@@ -24,16 +24,18 @@ jobs:
       - name: Check code coverage
         run: bun run coverage
 
-  release:
+  bump_version:
     # DO NOT RUN ON PR
     if: github.event_name != 'pull_request'
-
     needs: coverage
-
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
+
+    outputs:
+      current_tag: ${{ steps.current_tag.outputs.current_tag }}
+      previous_tag: ${{ steps.previous_tag.outputs.previous_tag }}
 
     steps:
       - name: Checkout repo
@@ -74,13 +76,20 @@ jobs:
       - name: Push changes
         run: git push --follow-tags origin main
 
+  release:
+    # DO NOT RUN ON PR
+    if: github.event_name != 'pull_request'
+    needs: bump_version
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Generate CHANGELOG for Github release
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          fromTag: ${{ steps.current_tag.outputs.current_tag }}
-          toTag: ${{ steps.previous_tag.outputs.previous_tag }}
+          fromTag: ${{ needs.bump_version.outputs.current_tag }}
+          toTag: ${{ needs.bump_version.outputs.previous_tag }}
           writeToFile: false
 
       - name: Create Github release
@@ -89,8 +98,8 @@ jobs:
           allowUpdates: true
           draft: false
           makeLatest: true
-          tag: ${{ steps.current_tag.outputs.current_tag }}
-          name: ${{ steps.current_tag.outputs.current_tag }}
+          tag: ${{ needs.bump_version.outputs.current_tag }}
+          name: ${{ needs.bump_version.outputs.current_tag }}
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ github.token }}
           artifacts: '*.tgz'

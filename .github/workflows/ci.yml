@@ -89,7 +89,6 @@ jobs:
       - name: Create Github release
         uses: ncipollo/release-action@v1.13.0
         with:
-          prerelease: true
           allowUpdates: true
           draft: false
           makeLatest: true
@@ -100,6 +99,6 @@ jobs:
           artifacts: '*.tgz'
 
       - name: Publish to NPM
-        run: npm run publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

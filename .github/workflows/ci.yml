@@ -56,12 +56,17 @@ jobs:
       - name: Build library and CLI
         run: bun run build
 
+      - name: Get previous tag
+        id: previousTag
+        run: git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | tail -2 | head -1
+
       - name: Generate CHANGELOG for Github release
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
+          fromTag: ${{ github.ref_name }}
+          toTag: ${{ steps.previousTag.outputs.stdout }}
           writeToFile: false
 
       - name: Bump package version

@@ -57,6 +57,7 @@ export type BaseSchema = {
 type Options<Schema extends BaseSchema> = {
     service: string;
     schema?: Schema;
+    defaultMeta?: Record<string, unknown>;
 }
 
 type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Message> =
@@ -86,6 +87,7 @@ export class Logger<Schema extends BaseSchema> {
                 format.json()
             ),
             defaultMeta: {
+                ...(options.defaultMeta ?? {}),
                 name: pkg.name,
                 pid: process.pid,
                 commitHash: getCommitHash(),

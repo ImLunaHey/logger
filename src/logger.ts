@@ -110,6 +110,7 @@ export class Logger<Schema extends BaseSchema> {
                 // Allowing this to be optional is a mistake waiting to happen
                 handleExceptions: true,
                 handleRejections: true,
+                token: process.env.AXIOM_TOKEN,
             }));
         }
 

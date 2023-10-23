@@ -29,9 +29,15 @@ type Meta = {
 
 const inATerminal = process.stdout.isTTY;
 
-const formatMeta = (meta: Meta) => {
+const metaToSplat = (meta: Meta): Record<string, unknown> => {
   const splats = meta[Symbol.for('splat') as typeof splatSymbol];
   const splat = splats && splats.length > 0 ? (splats.length === 1 ? splats[0] : splats) : undefined;
+  if (!splat) return {} as Record<string, unknown>;
+  return Object.keys(splat).length >= 1 ? (splat as Record<string, unknown>) : ({} as Record<string, unknown>);
+};
+
+const formatMeta = (meta: Meta) => {
+  const splat = metaToSplat(meta);
   if (!splat) return '';
   if (!inATerminal) return Object.keys(splat).length >= 1 ? JSON.stringify(splat) : '';
   return Object.keys(splat).length >= 1 ? cj(JSON.stringify(splat)) : '';
@@ -132,10 +138,26 @@ export class Logger<Schema extends BaseSchema> {
           format: format.combine(
             format.timestamp(),
             format.printf(({ service, level, message, timestamp, ...meta }) => {
-              const formattedDate = new Date(timestamp as string).toLocaleTimeString('en');
               const serviceName = (service as string) ?? 'app';
               const formattedLevel = colourLevel(level as keyof typeof logLevelColours);
               const formattedMeta = formatMeta(meta as Meta);
+
+              // If this isnt a user's actual terminal return the data as JSON
+              // This allows things like railway's logger to work
+              if (!inATerminal)
+                return JSON.stringify(
+                  {
+                    _time: new Date(timestamp).toISOString(),
+                    service: serviceName,
+                    level: formattedLevel,
+                    message: message as string,
+                    meta: metaToSplat(meta as Meta),
+                  },
+                  null,
+                  0,
+                );
+
+              const formattedDate = new Date(timestamp as string).toLocaleTimeString('en');
               return `${formattedDate} [${serviceName}] [${formattedLevel}]: ${message as string} ${formattedMeta}`.trim();
             }),
           ),

@@ -1,6 +1,6 @@
 {
   "name": "@imlunahey/logger",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "A decent logger for bun",
   "module": "dist/logger.js",
   "types": "dist/logger.d.ts",

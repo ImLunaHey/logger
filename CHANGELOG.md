@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.27](https://github.com/ImLunaHey/logger/compare/v0.0.26...v0.0.27) (2023-10-23)
+
+
+### Bug Fixes
+
+* JSON logging when no TTY ([f200dfa](https://github.com/ImLunaHey/logger/commit/f200dfafe60be73dd7f9d45e852084544757d768))
+
 ### [0.0.26](https://github.com/ImLunaHey/logger/compare/v0.0.25...v0.0.26) (2023-10-23)
 
 

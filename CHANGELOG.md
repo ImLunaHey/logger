@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.26](https://github.com/ImLunaHey/logger/compare/v0.0.25...v0.0.26) (2023-10-23)
+
+
+### Bug Fixes
+
+* dont use color-json when there is no terminal ([97f6e6c](https://github.com/ImLunaHey/logger/commit/97f6e6cf89fe4ddb46822300c17460582faa4cca))
+
 ### [0.0.25](https://github.com/ImLunaHey/logger/compare/v0.0.24...v0.0.25) (2023-10-09)
 
 ### [0.0.24](https://github.com/ImLunaHey/logger/compare/v0.0.23...v0.0.24) (2023-10-07)

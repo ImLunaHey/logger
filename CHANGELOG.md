@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.28](https://github.com/ImLunaHey/logger/compare/v0.0.27...v0.0.28) (2024-01-01)
+
+
+### Bug Fixes
+
+* error method not accepting error field ([0015d59](https://github.com/ImLunaHey/logger/commit/0015d59d71c2f32e4e7ee2b887bd2acc06ab502f))
+* schema being required ([c8e4e65](https://github.com/ImLunaHey/logger/commit/c8e4e659004d62d9579b0f17956e5daf4a64c3f5))
+
 ### [0.0.27](https://github.com/ImLunaHey/logger/compare/v0.0.26...v0.0.27) (2023-10-23)
 
 

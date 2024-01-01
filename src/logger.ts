@@ -74,19 +74,23 @@ type Literal = z.infer<typeof literalSchema>;
 type Json = Literal | { [key: string]: Json } | Json[];
 
 type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Message> = [Message] extends [never]
-  ? z.input<z.ZodType<Json>>
+  ? Level extends 'error'
+    ? z.input<
+        z.ZodType<{
+          error: Error;
+        }>
+      >
+    : z.input<z.ZodType<Json>>
   : Message extends keyof Schema[Level]
   ? Schema[Level][Message] extends z.ZodType<any, any, any>
-    ? z.input<Schema[Level][Message]>
+    ? z.input<Level extends 'error' ? Schema[Level][Message] & z.ZodType<{ error: Error }> : Schema[Level][Message]>
     : undefined
   : never;
 
 type DebugMeta<Schema extends BaseSchema, Message extends keyof Schema['debug']> = MetaForSchema<Schema, 'debug', Message>;
 type InfoMeta<Schema extends BaseSchema, Message extends keyof Schema['info']> = MetaForSchema<Schema, 'info', Message>;
 type WarnMeta<Schema extends BaseSchema, Message extends keyof Schema['warn']> = MetaForSchema<Schema, 'warn', Message>;
-type ErrorMeta<Schema extends BaseSchema, Message extends keyof Schema['error']> = {
-  error: Error;
-} & MetaForSchema<Schema, 'error', Message>;
+type ErrorMeta<Schema extends BaseSchema, Message extends keyof Schema['error']> = MetaForSchema<Schema, 'error', Message>;
 
 export class Logger<Schema extends BaseSchema> {
   private logger: WinstonLogger;

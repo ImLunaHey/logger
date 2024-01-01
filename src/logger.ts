@@ -63,13 +63,19 @@ export type BaseSchema = {
   [level in LogLevel]?: Record<string, z.ZodObject<any, any, any>>;
 };
 
-type Options<Schema extends BaseSchema> = {
+type Options<Schema extends BaseSchema = BaseSchema> = {
   service: string;
   schema?: Schema;
   defaultMeta?: Record<string, unknown>;
 };
 
-type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Message> = Message extends keyof Schema[Level]
+const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+type Literal = z.infer<typeof literalSchema>;
+type Json = Literal | { [key: string]: Json } | Json[];
+
+type MetaForSchema<Schema extends BaseSchema, Level extends keyof Schema, Message> = [Message] extends [never]
+  ? z.input<z.ZodType<Json>>
+  : Message extends keyof Schema[Level]
   ? Schema[Level][Message] extends z.ZodType<any, any, any>
     ? z.input<Schema[Level][Message]>
     : undefined
@@ -173,11 +179,17 @@ export class Logger<Schema extends BaseSchema> {
     this.schema = options.schema;
   }
 
-  private log<Message extends keyof Schema[LogLevel]>(
-    level: LogLevel,
+  private log<Level extends LogLevel, Message extends keyof Schema[Level], Data extends Schema[Level][Message]>(
+    level: Level,
     message: Message,
-    data: Schema[LogLevel][Message] extends z.ZodType ? z.input<Schema[LogLevel][Message]> : undefined,
+    data: Data extends z.ZodType ? z.input<Data> : z.input<any>,
   ) {
+    // If we don't have a schema just log the message
+    if (!this.schema) {
+      this.logger[level](message as string, data);
+      return;
+    }
+
     // Ensure meta is valid before logging
     const parser = this.schema?.[level]?.[message as string];
     const parsedData = parser?.safeParse(data);
@@ -194,26 +206,42 @@ export class Logger<Schema extends BaseSchema> {
     this.logger[level](message as string, meta);
   }
 
-  debug<Message extends keyof Schema['debug']>(message: Message, meta: DebugMeta<Schema, Message>) {
-    this.log('debug', message, meta);
+  debug<Message extends keyof Schema['debug']>(
+    message: [Message] extends [never] ? string : Message,
+    meta: DebugMeta<Schema, Message>,
+  ) {
+    this.log('debug', message as Message, meta as any);
   }
 
-  info<Message extends keyof Schema['info']>(message: Message, meta: InfoMeta<Schema, Message>) {
-    this.log('info', message, meta);
+  info<Message extends keyof Schema['info']>(
+    message: [Message] extends [never] ? string : Message,
+    meta: InfoMeta<Schema, Message>,
+  ) {
+    this.log('info', message as Message, meta as any);
   }
 
-  warn<Message extends keyof Schema['warn']>(message: Message, meta: WarnMeta<Schema, Message>) {
-    this.log('warn', message, meta);
+  warn<Message extends keyof Schema['warn']>(
+    message: [Message] extends [never] ? string : Message,
+    meta: WarnMeta<Schema, Message>,
+  ) {
+    this.log('warn', message as Message, meta as any);
   }
 
-  error<Message extends keyof Schema['error']>(message: Message, meta: ErrorMeta<Schema, Message>) {
+  error<Message extends keyof Schema['error']>(
+    message: [Message] extends [never] ? string : Message,
+    meta: ErrorMeta<Schema, Message>,
+  ) {
     // If the error isn't an error object make it so
     // This is to prevent issues where something other than an Error is thrown
     // When passing this to transports like Axiom it really needs to be a real Error class
     if (meta?.error && !(meta?.error instanceof Error)) meta.error = new Error(`Unknown Error: ${String(meta.error)}`);
-    this.log('error', message, {
-      ...meta,
-      error: serialiseError(meta?.error as Error),
-    });
+    this.log(
+      'error',
+      message as Message,
+      {
+        ...meta,
+        error: serialiseError(meta?.error as Error),
+      } as any,
+    );
   }
 }
